@@ -14,7 +14,7 @@ import {
 import { Level } from '../types/level';
 import { Events } from '../events';
 import { ErrorTypes, ErrorDetails } from '../errors';
-import { isCodecSupportedInMp4 } from '../utils/codecs';
+import { isCodecSupportedInMp4, getCodecCompatibleName } from '../utils/codecs';
 import { addGroupId, assignTrackIdsByGroup } from './level-helper';
 import BasePlaylistController from './base-playlist-controller';
 import { PlaylistContextType, PlaylistLevelType } from '../types/loader';
@@ -25,6 +25,8 @@ import type { MediaPlaylist } from '../types/media-playlist';
 const chromeOrFirefox: boolean = /chrome|firefox/.test(
   navigator.userAgent.toLowerCase()
 );
+
+const AUDIO_CODEC_REGEXP = /flac|opus/gi;
 
 export default class LevelController extends BasePlaylistController {
   private _levels: Level[] = [];
@@ -107,6 +109,13 @@ export default class LevelController extends BasePlaylistController {
         levelParsed.audioCodec.indexOf('mp4a.40.34') !== -1
       ) {
         levelParsed.audioCodec = undefined;
+      }
+
+      if (levelParsed.audioCodec) {
+        levelParsed.audioCodec = levelParsed.audioCodec.replace(
+          AUDIO_CODEC_REGEXP,
+          getCodecCompatibleName
+        );
       }
 
       const levelKey = `${levelParsed.bitrate}-${levelParsed.attrs.RESOLUTION}-${levelParsed.attrs.CODECS}`;
