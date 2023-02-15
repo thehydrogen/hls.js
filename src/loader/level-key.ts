@@ -60,24 +60,22 @@ export class LevelKey implements DecryptData {
       if (this.method === 'AES-128' || this.method === 'NONE') {
         return true;
       }
-      if (this.keyFormat === 'identity') {
-        // Maintain support for clear SAMPLE-AES with MPEG-3 TS
-        return this.method === 'SAMPLE-AES';
-      } else if (__USE_EME_DRM__) {
-        switch (this.keyFormat) {
-          case KeySystemFormats.FAIRPLAY:
-          case KeySystemFormats.WIDEVINE:
-          case KeySystemFormats.PLAYREADY:
-          case KeySystemFormats.CLEARKEY:
-            return (
-              [
-                'ISO-23001-7',
-                'SAMPLE-AES',
-                'SAMPLE-AES-CENC',
-                'SAMPLE-AES-CTR',
-              ].indexOf(this.method) !== -1
-            );
-        }
+      switch (this.keyFormat) {
+        case 'identity':
+          // Maintain support for clear SAMPLE-AES with MPEG-3 TS
+          return this.method === 'SAMPLE-AES';
+        case KeySystemFormats.FAIRPLAY:
+        case KeySystemFormats.WIDEVINE:
+        case KeySystemFormats.PLAYREADY:
+        case KeySystemFormats.CLEARKEY:
+          return (
+            [
+              'ISO-23001-7',
+              'SAMPLE-AES',
+              'SAMPLE-AES-CENC',
+              'SAMPLE-AES-CTR',
+            ].indexOf(this.method) !== -1
+          );
       }
     }
     return false;
@@ -110,10 +108,6 @@ export class LevelKey implements DecryptData {
         iv
       );
       return decryptdata;
-    }
-
-    if (!__USE_EME_DRM__) {
-      return this;
     }
 
     // Initialize keyId if possible

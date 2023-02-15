@@ -91,9 +91,6 @@ export class BaseSegment {
   }
 }
 
-/**
- * Object representing parsed data from an HLS Segment. Found in {@link hls.js#LevelDetails.fragments}.
- */
 export class Fragment extends BaseSegment {
   private _decryptdata: LevelKey | null = null;
 
@@ -123,6 +120,8 @@ export class Fragment extends BaseSegment {
   public startPTS?: number;
   // The ending Presentation Time Stamp (PTS) of the fragment. Set after transmux complete.
   public endPTS?: number;
+  // The latest Presentation Time Stamp (PTS) appended to the buffer.
+  public appendedPTS?: number;
   // The starting Decode Time Stamp (DTS) of the fragment. Set after transmux complete.
   public startDTS!: number;
   // The ending Decode Time Stamp (DTS) of the fragment. Set after transmux complete.
@@ -145,8 +144,6 @@ export class Fragment extends BaseSegment {
   public title: string | null = null;
   // The Media Initialization Section for this segment
   public initSegment: Fragment | null = null;
-  // Fragment is the last fragment in the media playlist
-  public endList?: boolean;
 
   constructor(type: PlaylistLevelType, baseurl: string) {
     super(baseurl);
@@ -262,9 +259,6 @@ export class Fragment extends BaseSegment {
   }
 }
 
-/**
- * Object representing parsed data from an HLS Partial Segment. Found in {@link hls.js#LevelDetails.partList}.
- */
 export class Part extends BaseSegment {
   public readonly fragOffset: number = 0;
   public readonly duration: number = 0;

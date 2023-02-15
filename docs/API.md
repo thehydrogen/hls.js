@@ -1,7 +1,5 @@
 # HLS.js v1 API
 
-See [API Reference](https://hls-js-dev.netlify.app/api-docs/) for a complete list of interfaces available in the hls.js package.
-
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
@@ -21,7 +19,7 @@ See [API Reference](https://hls-js-dev.netlify.app/api-docs/) for a complete lis
   - [`Hls.DefaultConfig get/set`](#hlsdefaultconfig-getset)
   - [`capLevelToPlayerSize`](#capleveltoplayersize)
   - [`capLevelOnFPSDrop`](#caplevelonfpsdrop)
-  - [`ignoreDevicePixelRatio`](#ignoredevicepixelratio)
+  - [`ignoreDevicePixelRatio`](#ignoreDevicePixelRatio)
   - [`debug`](#debug)
   - [`autoStartLoad`](#autostartload)
   - [`startPosition`](#startposition)
@@ -33,7 +31,7 @@ See [API Reference](https://hls-js-dev.netlify.app/api-docs/) for a complete lis
   - [`maxBufferHole`](#maxbufferhole)
   - [`maxStarvationDelay`](#maxstarvationdelay)
   - [`maxLoadingDelay`](#maxloadingdelay)
-  - [`lowBufferWatchdogPeriod` (deprecated)](#lowbufferwatchdogperiod-deprecated)
+  - [`lowBufferWatchdogPeriod`](#lowbufferwatchdogperiod) (deprecated)
   - [`highBufferWatchdogPeriod`](#highbufferwatchdogperiod)
   - [`nudgeOffset`](#nudgeoffset)
   - [`nudgeMaxRetry`](#nudgemaxretry)
@@ -43,9 +41,9 @@ See [API Reference](https://hls-js-dev.netlify.app/api-docs/) for a complete lis
   - [`liveMaxLatencyDurationCount`](#livemaxlatencydurationcount)
   - [`liveSyncDuration`](#livesyncduration)
   - [`liveMaxLatencyDuration`](#livemaxlatencyduration)
-  - [`maxLiveSyncPlaybackRate`](#maxlivesyncplaybackrate)
+  - [`maxLiveSyncPlaybackRate`](#maxLiveSyncPlaybackRate)
   - [`liveDurationInfinity`](#livedurationinfinity)
-  - [`liveBackBufferLength` (deprecated)](#livebackbufferlength-deprecated)
+  - [`liveBackBufferLength`](#livebackbufferlength) (deprecated)
   - [`enableWorker`](#enableworker)
   - [`enableSoftwareAES`](#enablesoftwareaes)
   - [`startLevel`](#startlevel)
@@ -54,11 +52,9 @@ See [API Reference](https://hls-js-dev.netlify.app/api-docs/) for a complete lis
   - [`fragLoadingMaxRetryTimeout` / `manifestLoadingMaxRetryTimeout` / `levelLoadingMaxRetryTimeout`](#fragloadingmaxretrytimeout--manifestloadingmaxretrytimeout--levelloadingmaxretrytimeout)
   - [`fragLoadingRetryDelay` / `manifestLoadingRetryDelay` / `levelLoadingRetryDelay`](#fragloadingretrydelay--manifestloadingretrydelay--levelloadingretrydelay)
   - [`startFragPrefetch`](#startfragprefetch)
-  - [`testBandwidth`](#testbandwidth)
-  - [`progressive`](#progressive)
-  - [`lowLatencyMode`](#lowlatencymode)
-  - [`fpsDroppedMonitoringPeriod`](#fpsdroppedmonitoringperiod)
-  - [`fpsDroppedMonitoringThreshold`](#fpsdroppedmonitoringthreshold)
+  - [`testBandwidth`](#testBandwidth)
+  - [`fpsDroppedMonitoringPeriod`](#fpsDroppedMonitoringPeriod)
+  - [`fpsDroppedMonitoringThreshold`](#fpsDroppedMonitoringThreshold)
   - [`appendErrorMaxRetry`](#appenderrormaxretry)
   - [`loader`](#loader)
   - [`fLoader`](#floader)
@@ -66,9 +62,9 @@ See [API Reference](https://hls-js-dev.netlify.app/api-docs/) for a complete lis
   - [`xhrSetup`](#xhrsetup)
   - [`fetchSetup`](#fetchsetup)
   - [`abrController`](#abrcontroller)
-  - [`bufferController`](#buffercontroller)
-  - [`capLevelController`](#caplevelcontroller)
-  - [`fpsController`](#fpscontroller)
+  - [`bufferController`](#bufferController)
+  - [`capLevelController`](#capLevelController)
+  - [`fpsController`](#fpsController)
   - [`timelineController`](#timelinecontroller)
   - [`enableDateRangeMetadataCues`](#enabledaterangemetadatacues)
   - [`enableEmsgMetadataCues`](#enableemsgmetadatacues)
@@ -80,11 +76,11 @@ See [API Reference](https://hls-js-dev.netlify.app/api-docs/) for a complete lis
   - [`captionsTextTrack1LanguageCode`](#captionstexttrack1languagecode)
   - [`captionsTextTrack2Label`](#captionstexttrack2label)
   - [`captionsTextTrack2LanguageCode`](#captionstexttrack2languagecode)
-  - [`captionsTextTrack3Label`](#captionstexttrack3label)
-  - [`captionsTextTrack3LanguageCode`](#captionstexttrack3languagecode)
-  - [`captionsTextTrack4Label`](#captionstexttrack4label)
-  - [`captionsTextTrack4LanguageCode`](#captionstexttrack4languagecode)
-  - [`renderTextTracksNatively`](#rendertexttracksnatively)
+  - [`captionsTextTrack3Label`](#captionsTextTrack3Label)
+  - [`captionsTextTrack3LanguageCode`](#captionsTextTrack3LanguageCode)
+  - [`captionsTextTrack4Label`](#captionsTextTrack4Label)
+  - [`captionsTextTrack4LanguageCode`](#captionsTextTrack4LanguageCode)
+  - [`renderTextTracksNatively`](#renderTextTracksNatively)
   - [`stretchShortVideoTrack`](#stretchshortvideotrack)
   - [`maxAudioFramesDrift`](#maxaudioframesdrift)
   - [`forceKeyFrameOnDiscontinuity`](#forcekeyframeondiscontinuity)
@@ -97,14 +93,13 @@ See [API Reference](https://hls-js-dev.netlify.app/api-docs/) for a complete lis
   - [`abrBandWidthUpFactor`](#abrbandwidthupfactor)
   - [`abrMaxWithRealBitrate`](#abrmaxwithrealbitrate)
   - [`minAutoBitrate`](#minautobitrate)
-  - [`emeEnabled`](#emeenabled)
-  - [`widevineLicenseUrl` (deprecated)](#widevinelicenseurl-deprecated)
-  - [`licenseXhrSetup`](#licensexhrsetup)
-  - [`licenseResponseCallback`](#licenseresponsecallback)
-  - [`drmSystems`](#drmsystems)
-  - [`drmSystems[KEY-SYSTEM].generateRequest](#drmsystemskey-systemgeneraterequest)
-  - [`drmSystemOptions`](#drmsystemoptions)
-  - [`requestMediaKeySystemAccessFunc`](#requestmediakeysystemaccessfunc)
+  - [`emeEnabled`](#emeEnabled)
+  - [`widevineLicenseUrl`](#widevineLicenseUrl) (deprecated)
+  - [`licenseXhrSetup`](#licenseXhrSetup)
+  - [`licenseResponseCallback`](#licenseResponseCallback)
+  - [`drmSystems`](#drmSystems)
+  - [`drmSystemOptions`](#drmSystemOptions)
+  - [`requestMediaKeySystemAccessFunc`](#requestMediaKeySystemAccessFunc)
   - [`cmcd`](#cmcd)
 - [Video Binding/Unbinding API](#video-bindingunbinding-api)
   - [`hls.attachMedia(videoElement)`](#hlsattachmediavideoelement)
@@ -120,10 +115,9 @@ See [API Reference](https://hls-js-dev.netlify.app/api-docs/) for a complete lis
   - [`hls.startLevel`](#hlsstartlevel)
   - [`hls.autoLevelEnabled`](#hlsautolevelenabled)
   - [`hls.autoLevelCapping`](#hlsautolevelcapping)
-  - [`hls.maxHdcpLevel`](#hlsmaxhdcplevel)
   - [`hls.capLevelToPlayerSize`](#hlscapleveltoplayersize)
   - [`hls.bandwidthEstimate`](#hlsbandwidthestimate)
-  - [`hls.removeLevel(levelIndex, urlId)`](#hlsremovelevellevelindex-urlid)
+  - [`hls.removeLevel(levelIndex, urlId)`](#hlsremoveLevel)
 - [Version Control](#version-control)
   - [`Hls.version`](#hlsversion)
 - [Network Loading Control API](#network-loading-control-api)
@@ -149,7 +143,6 @@ See [API Reference](https://hls-js-dev.netlify.app/api-docs/) for a complete lis
   - [Network Errors](#network-errors)
   - [Media Errors](#media-errors)
   - [Mux Errors](#mux-errors)
-  - [EME Key System Errors](#eme-key-system-errors)
   - [Other Errors](#other-errors)
 - [Objects](#objects)
   - [Level](#level)
@@ -639,7 +632,7 @@ Override current Media Source duration to `Infinity` for a live broadcast.
 Useful, if you are building a player which relies on native UI capabilities in modern browsers.
 If you want to have a native Live UI in environments like iOS Safari, Safari, Android Google Chrome, etc. set this value to `true`.
 
-### `liveBackBufferLength` (deprecated)
+### `liveBackBufferLength`
 
 `liveBackBufferLength` has been deprecated. Use `backBufferLength` instead.
 
@@ -914,9 +907,10 @@ var config = {
 
 Customized Adaptive Bitrate Streaming Controller.
 
-Parameter should be a class providing a getter/setter and a `destroy()` method:
+Parameter should be a class providing 2 getters, 2 setters and a `destroy()` method:
 
 - get/set `nextAutoLevel`: return next auto-quality level/force next auto-quality level that should be returned (currently used for emergency switch down)
+- get/set `autoLevelCapping`: capping/max level value that could be used by ABR Controller
 - `destroy()`: should clean-up all used resources
 
 For `hls.bandwidthEstimate()` to return an estimate from your custom controller, it will also need to satisfy `abrController.bwEstimator.getEstimate()`.
@@ -1425,12 +1419,6 @@ Default value is `hls.firstLevel`.
 
 Default value is `-1` (no level capping).
 
-### `hls.maxHdcpLevel`
-
-- get/set: The maximum HDCP-LEVEL allowed to be selected by auto level selection. Must be a valid HDCP-LEVEL value ('NONE', 'TYPE-0', 'TYPE-1', 'TYPE-2'), or null (default). `hls.maxHdcpLevel` is automatically set to the next lowest value when a `KEY_SYSTEM_STATUS_OUTPUT_RESTRICTED` error occurs. To prevent manual selection of levels with specific HDCP-LEVEL attribute values, use `hls.removeLevel()` on `MANIFEST_LOADED` or on error.
-
-Default value is null (no level capping based on HDCP-LEVEL)
-
 ### `hls.capLevelToPlayerSize`
 
 - get: Enables or disables level capping. If disabled after previously enabled, `nextLevelSwitch` will be immediately called.
@@ -1444,7 +1432,7 @@ get: Returns the current bandwidth estimate in bits/s, if available. Otherwise, 
 
 ### `hls.removeLevel(levelIndex, urlId)`
 
-Remove a loaded level from the list of levels, or a url from a level's list of redundant urls.
+Remove a loaded level from the list of levels, or a level url in from a list of redundant level urls.
 This can be used to remove a rendition or playlist url that errors frequently from the list of levels that a user
 or hls.js can choose from.
 
@@ -1585,7 +1573,7 @@ Full list of Events is available below:
   - data: { `level` and Level object properties (please see [below](#level) for more information) }
 - `Hls.Events.LEVEL_SWITCHED` - fired when a level switch is effective
   - data: { level : id of new level }
-- `Hls.Events.LEVEL_LOADING` - fired when a level playlist is requested (unless it is the only media playlist loaded via `hls.loadSource()`)
+- `Hls.Events.LEVEL_LOADING` - fired when a level playlist loading starts
   - data: { url : level URL, level : id of level being loaded, deliveryDirectives: LL-HLS delivery directives or `null` when blocking reload is not supported }
 - `Hls.Events.LEVEL_LOADED` - fired when a level playlist loading finishes
   - data: { details : [LevelDetails](#leveldetails), level : id of loaded level, stats : [LoadStats] }
@@ -1728,8 +1716,6 @@ Full list of errors is described below:
   - data: { type : `NETWORK_ERROR`, details : `Hls.ErrorDetails.LEVEL_LOAD_ERROR`, fatal : `true`, url : level URL, response : { code: error code, text: error text }, loader : URL loader }
 - `Hls.ErrorDetails.LEVEL_LOAD_TIMEOUT` - raised when level loading fails because of a timeout
   - data: { type : `NETWORK_ERROR`, details : `Hls.ErrorDetails.LEVEL_LOAD_TIMEOUT`, fatal : `false`, url : level URL, loader : URL loader }
-- `Hls.ErrorDetails.LEVEL_PARSING_ERROR` - raised when level parsing failed or found invalid content
-  - data: { type : `NETWORK_ERROR`, details : `Hls.ErrorDetails.LEVEL_PARSING_ERROR`, fatal : `false`, url : level URL, error: Error }
 - `Hls.ErrorDetails.AUDIO_TRACK_LOAD_ERROR` - raised when audio playlist loading fails because of a network error
   - data: { type : `NETWORK_ERROR`, details : `Hls.ErrorDetails.AUDIO_TRACK_LOAD_ERROR`, fatal : `false`, url : audio URL, response : { code: error code, text: error text }, loader : URL loader }
 - `Hls.ErrorDetails.AUDIO_TRACK_LOAD_TIMEOUT` - raised when audio playlist loading fails because of a timeout

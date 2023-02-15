@@ -18,7 +18,6 @@ export interface LevelParsed {
 }
 
 export interface LevelAttributes extends AttrList {
-  'ALLOWED-CPC'?: string;
   AUDIO?: string;
   AUTOSELECT?: string;
   'AVERAGE-BANDWIDTH'?: string;
@@ -30,23 +29,14 @@ export interface LevelAttributes extends AttrList {
   DEFAULT?: string;
   FORCED?: string;
   'FRAME-RATE'?: string;
-  'HDCP-LEVEL'?: string;
   LANGUAGE?: string;
   NAME?: string;
-  'PATHWAY-ID'?: string;
   'PROGRAM-ID'?: string;
   RESOLUTION?: string;
-  SCORE?: string;
   SUBTITLES?: string;
   TYPE?: string;
   URI?: string;
-  'VIDEO-RANGE'?: string;
 }
-
-export const HdcpLevels = ['NONE', 'TYPE-0', 'TYPE-1', 'TYPE-2', null] as const;
-export type HdcpLevel = (typeof HdcpLevels)[number];
-
-export type VariableMap = Record<string, string>;
 
 export enum HlsSkip {
   No = '',
@@ -88,7 +78,7 @@ export class HlsUrlParameters {
     if (this.skip) {
       url.searchParams.set('_HLS_skip', this.skip);
     }
-    return url.href;
+    return url.toString();
   }
 }
 

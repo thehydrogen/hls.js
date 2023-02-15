@@ -1159,9 +1159,9 @@ class Cea608Parser {
 
   /**
    * Parse Command.
-   * @returns True if a command was found
+   * @returns {Boolean} Tells if a command was found
    */
-  parseCmd(a: number, b: number): boolean {
+  parseCmd(a: number, b: number) {
     const { cmdHistory } = this;
     const cond1 =
       (a === 0x14 || a === 0x1c || a === 0x15 || a === 0x1d) &&
@@ -1229,8 +1229,9 @@ class Cea608Parser {
 
   /**
    * Parse midrow styling command
+   * @returns {Boolean}
    */
-  parseMidrow(a: number, b: number): boolean {
+  parseMidrow(a: number, b: number) {
     let chNr: number = 0;
 
     if ((a === 0x11 || a === 0x19) && b >= 0x20 && b <= 0x2f) {
@@ -1303,7 +1304,7 @@ class Cea608Parser {
 
   /**
    * Interpret the second byte of the pac, and return the information.
-   * @returns pacData with style parameters
+   * @returns {Object} pacData with style parameters.
    */
   interpretPAC(row: number, byte: number): PACData {
     let pacIndex;
@@ -1390,7 +1391,7 @@ class Cea608Parser {
 
   /**
    * Parse extended background attributes as well as new foreground color black.
-   * @returns True if background attributes are found
+   * @returns {Boolean} Tells if background attributes are found
    */
   parseBackgroundAttributes(a: number, b: number): boolean {
     const case1 = (a === 0x10 || a === 0x18) && b >= 0x20 && b <= 0x2f;

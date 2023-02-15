@@ -372,13 +372,16 @@ export class SubtitleStreamController
 
     if (this.state === State.IDLE) {
       const { currentTrackId, levels } = this;
-      const track = levels[currentTrackId];
-      if (!levels.length || !track || !track.details) {
+      if (
+        !levels.length ||
+        !levels[currentTrackId] ||
+        !levels[currentTrackId].details
+      ) {
         return;
       }
 
       // Expand range of subs loaded by one target-duration in either direction to make up for misaligned playlists
-      const trackDetails = track.details as LevelDetails;
+      const trackDetails = levels[currentTrackId].details as LevelDetails;
       const targetDuration = trackDetails.targetduration;
       const { config } = this;
       const currentTime = this.getLoadPosition();
@@ -437,7 +440,7 @@ export class SubtitleStreamController
         this.fragmentTracker.getState(foundFrag) === FragmentState.NOT_LOADED
       ) {
         // only load if fragment is not loaded
-        this.loadFragment(foundFrag, track, targetBufferTime);
+        this.loadFragment(foundFrag, trackDetails, targetBufferTime);
       }
     }
   }
@@ -452,15 +455,15 @@ export class SubtitleStreamController
 
   protected loadFragment(
     frag: Fragment,
-    level: Level,
+    levelDetails: LevelDetails,
     targetBufferTime: number
   ) {
     this.fragCurrent = frag;
     if (frag.sn === 'initSegment') {
-      this._loadInitSegment(frag, level);
+      this._loadInitSegment(frag, levelDetails);
     } else {
       this.startFragRequested = true;
-      super.loadFragment(frag, level, targetBufferTime);
+      super.loadFragment(frag, levelDetails, targetBufferTime);
     }
   }
 

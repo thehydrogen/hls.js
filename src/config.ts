@@ -44,9 +44,6 @@ export type BufferControllerConfig = {
   appendErrorMaxRetry: number;
   backBufferLength: number;
   liveDurationInfinity: boolean;
-  /**
-   * @deprecated use backBufferLength
-   */
   liveBackBufferLength: number | null;
 };
 
@@ -251,12 +248,9 @@ export type HlsConfig = {
   TimelineControllerConfig &
   TSDemuxerConfig;
 
-/**
- * @ignore
- * If possible, keep hlsDefaultConfig shallow
- * It is cloned whenever a new Hls instance is created, by keeping the config
- * shallow the properties are cloned, and we don't end up manipulating the default
- */
+// If possible, keep hlsDefaultConfig shallow
+// It is cloned whenever a new Hls instance is created, by keeping the config
+// shallow the properties are cloned, and we don't end up manipulating the default
 export const hlsDefaultConfig: HlsConfig = {
   autoStartLoad: true, // used by stream-controller
   startPosition: -1, // used by stream-controller
@@ -280,9 +274,6 @@ export const hlsDefaultConfig: HlsConfig = {
   liveMaxLatencyDuration: undefined, // used by latency-controller
   maxLiveSyncPlaybackRate: 1, // used by latency-controller
   liveDurationInfinity: false, // used by buffer-controller
-  /**
-   * @deprecated use backBufferLength
-   */
   liveBackBufferLength: null, // used by buffer-controller
   maxMaxBufferLength: 600, // used by stream-controller
   enableWorker: true, // used by demuxer
@@ -333,9 +324,7 @@ export const hlsDefaultConfig: HlsConfig = {
   widevineLicenseUrl: undefined, // used by eme-controller
   drmSystems: {}, // used by eme-controller
   drmSystemOptions: {}, // used by eme-controller
-  requestMediaKeySystemAccessFunc: __USE_EME_DRM__
-    ? requestMediaKeySystemAccess
-    : null, // used by eme-controller
+  requestMediaKeySystemAccessFunc: requestMediaKeySystemAccess, // used by eme-controller
   testBandwidth: true,
   progressive: false,
   lowLatencyMode: true,
@@ -377,9 +366,6 @@ function timelineConfig(): TimelineControllerConfig {
   };
 }
 
-/**
- * @ignore
- */
 export function mergeConfig(
   defaultConfig: HlsConfig,
   userConfig: Partial<HlsConfig>
@@ -418,9 +404,6 @@ export function mergeConfig(
   return Object.assign({}, defaultConfig, userConfig);
 }
 
-/**
- * @ignore
- */
 export function enableStreamingMode(config) {
   const currentLoader = config.loader;
   if (currentLoader !== FetchLoader && currentLoader !== XhrLoader) {

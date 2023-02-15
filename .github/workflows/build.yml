@@ -8,10 +8,6 @@ on:
 
 permissions: {}
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
   config:
     runs-on: ubuntu-latest
@@ -79,11 +75,11 @@ jobs:
       - name: use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version-file: '.node-version'
+          node-version: '16'
 
       - name: install
         run: |
-          npx -y npm-ci-please@^1.1.1
+          npm ci
         env:
           CI: true
 
@@ -94,7 +90,7 @@ jobs:
 
       - name: set version
         run: |
-          ./scripts/set-package-version.sh
+          node ./scripts/set-package-version.js
         env:
           CI: true
           TAG: ${{ needs.config.outputs.tag }}
@@ -103,8 +99,6 @@ jobs:
         run: |
           npm run build:ci
           npm run docs
-          ./scripts/check-docs-built.sh
-
           # check that hls.js doesn't error if requiring in node
           # see https://github.com/video-dev/hls.js/pull/1642
           node -e 'require("./" + require("./package.json").main)'
@@ -115,12 +109,10 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build
-          # version number is set in package.json so need to include that
           path: |
-            package.json
-            package-lock.json
-            api-docs/**
-            dist/**
+            **
+            !**/[.]*/**
+            !**/node_modules/
 
   test_unit:
     needs: build
@@ -143,7 +135,7 @@ jobs:
       - name: use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version-file: '.node-version'
+          node-version: '16'
 
       - name: download build
         uses: actions/download-artifact@v3
@@ -152,7 +144,7 @@ jobs:
 
       - name: install
         run: |
-          npx -y npm-ci-please@^1.1.1
+          npm ci
         env:
           CI: true
 
@@ -184,7 +176,7 @@ jobs:
       - name: use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version-file: '.node-version'
+          node-version: '16'
 
       - name: download build
         uses: actions/download-artifact@v3
@@ -193,7 +185,7 @@ jobs:
 
       - name: install
         run: |
-          npx -y npm-ci-please@^1.1.1
+          npm ci
         env:
           CI: true
 
@@ -241,7 +233,7 @@ jobs:
       - name: use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version-file: '.node-version'
+          node-version: '16'
 
       - name: download build
         uses: actions/download-artifact@v3
@@ -284,7 +276,7 @@ jobs:
       - name: use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version-file: '.node-version'
+          node-version: '16'
 
       - name: download build
         uses: actions/download-artifact@v3
@@ -293,7 +285,7 @@ jobs:
 
       - name: install
         run: |
-          npx -y npm-ci-please@^1.1.1
+          npm ci
         env:
           CI: true
 
@@ -338,7 +330,7 @@ jobs:
       - name: use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version-file: '.node-version'
+          node-version: '16'
 
       - name: download build
         uses: actions/download-artifact@v3
@@ -346,7 +338,7 @@ jobs:
           name: build
 
       - name: start SauceConnect tunnel
-        uses: saucelabs/sauce-connect-action@7b93bae049e2f30e1b97627e257e529c7537afe9
+        uses: tjenkinson/sauce-connect-action@cb0550b782d59960a9864e3629a619fde1cb2c74
         with:
           username: ${{ secrets.SAUCE_USERNAME }}
           accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
@@ -355,7 +347,7 @@ jobs:
 
       - name: install
         run: |
-          npx -y npm-ci-please@^1.1.1
+          npm ci
         env:
           CI: true
 
@@ -420,7 +412,7 @@ jobs:
       - name: use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version-file: '.node-version'
+          node-version: '16'
 
       - name: download build
         uses: actions/download-artifact@v3
@@ -428,7 +420,7 @@ jobs:
           name: build
 
       - name: start SauceConnect tunnel
-        uses: saucelabs/sauce-connect-action@7b93bae049e2f30e1b97627e257e529c7537afe9
+        uses: tjenkinson/sauce-connect-action@cb0550b782d59960a9864e3629a619fde1cb2c74
         with:
           username: ${{ secrets.SAUCE_USERNAME }}
           accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
@@ -437,7 +429,7 @@ jobs:
 
       - name: install
         run: |
-          npx -y npm-ci-please@^1.1.1
+          npm ci
         env:
           CI: true
 
