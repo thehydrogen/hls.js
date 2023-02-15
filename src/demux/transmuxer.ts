@@ -26,14 +26,14 @@ try {
 }
 
 type MuxConfig =
-  | { demux: typeof MP4Demuxer; remux: typeof PassThroughRemuxer }
   | { demux: typeof TSDemuxer; remux: typeof MP4Remuxer }
+  | { demux: typeof MP4Demuxer; remux: typeof PassThroughRemuxer }
   | { demux: typeof AACDemuxer; remux: typeof MP4Remuxer }
   | { demux: typeof MP3Demuxer; remux: typeof MP4Remuxer };
 
 const muxConfig: MuxConfig[] = [
-  { demux: MP4Demuxer, remux: PassThroughRemuxer },
   { demux: TSDemuxer, remux: MP4Remuxer },
+  { demux: MP4Demuxer, remux: PassThroughRemuxer },
   { demux: AACDemuxer, remux: MP4Remuxer },
   { demux: MP3Demuxer, remux: MP4Remuxer },
 ];
@@ -112,16 +112,11 @@ export default class Transmuxer {
       if (decrypter.isSync()) {
         // Software decryption is progressive. Progressive decryption may not return a result on each call. Any cached
         // data is handled in the flush() call
-        let decryptedData = decrypter.softwareDecrypt(
+        const decryptedData = decrypter.softwareDecrypt(
           uintData,
           keyData.key.buffer,
           keyData.iv.buffer
         );
-        // For Low-Latency HLS Parts, decrypt in place, since part parsing is expected on push progress
-        const loadingParts = chunkMeta.part > -1;
-        if (loadingParts) {
-          decryptedData = decrypter.flush();
-        }
         if (!decryptedData) {
           stats.executeEnd = now();
           return emptyResult(chunkMeta);

@@ -233,24 +233,6 @@ export default class StreamController
     const levelInfo = levels[level];
 
     // if buffer length is less than maxBufLen try to load a new fragment
-
-    const bufferInfo = this.getMainFwdBufferInfo();
-    if (bufferInfo === null) {
-      return;
-    }
-
-    const lastDetails = this.getLevelDetails();
-    if (lastDetails && this._streamEnded(bufferInfo, lastDetails)) {
-      const data: BufferEOSData = {};
-      if (this.altAudio) {
-        data.type = 'video';
-      }
-
-      this.hls.trigger(Events.BUFFER_EOS, data);
-      this.state = State.ENDED;
-      return;
-    }
-
     // set next load level : this will trigger a playlist load if needed
     this.level = hls.nextLoadLevel = level;
 
@@ -263,11 +245,14 @@ export default class StreamController
       this.state === State.WAITING_LEVEL ||
       (levelDetails.live && this.levelLastLoaded !== level)
     ) {
-      this.level = level;
       this.state = State.WAITING_LEVEL;
       return;
     }
 
+    const bufferInfo = this.getMainFwdBufferInfo();
+    if (bufferInfo === null) {
+      return;
+    }
     const bufferLen = bufferInfo.len;
 
     // compute max Buffer Length that we could get from this load level, based on level bitrate. don't buffer more than 60 MB and more than 30s
@@ -275,6 +260,17 @@ export default class StreamController
 
     // Stay idle if we are still with buffer margins
     if (bufferLen >= maxBufLen) {
+      return;
+    }
+
+    if (this._streamEnded(bufferInfo, levelDetails)) {
+      const data: BufferEOSData = {};
+      if (this.altAudio) {
+        data.type = 'video';
+      }
+
+      this.hls.trigger(Events.BUFFER_EOS, data);
+      this.state = State.ENDED;
       return;
     }
 
@@ -317,12 +313,8 @@ export default class StreamController
         this.audioOnly && !this.altAudio
           ? ElementaryStreamTypes.AUDIO
           : ElementaryStreamTypes.VIDEO;
-      const mediaBuffer =
-        (type === ElementaryStreamTypes.VIDEO
-          ? this.videoBuffer
-          : this.mediaBuffer) || this.media;
-      if (mediaBuffer) {
-        this.afterBufferFlushed(mediaBuffer, type, PlaylistLevelType.MAIN);
+      if (media) {
+        this.afterBufferFlushed(media, type, PlaylistLevelType.MAIN);
       }
       frag = this.getNextFragment(this.nextLoadPosition, levelDetails);
     }
@@ -333,12 +325,12 @@ export default class StreamController
       frag = frag.initSegment;
     }
 
-    this.loadFragment(frag, levelInfo, targetBufferTime);
+    this.loadFragment(frag, levelDetails, targetBufferTime);
   }
 
   protected loadFragment(
     frag: Fragment,
-    level: Level,
+    levelDetails: LevelDetails,
     targetBufferTime: number
   ) {
     // Check if fragment is not loaded
@@ -346,15 +338,15 @@ export default class StreamController
     this.fragCurrent = frag;
     if (fragState === FragmentState.NOT_LOADED) {
       if (frag.sn === 'initSegment') {
-        this._loadInitSegment(frag, level);
+        this._loadInitSegment(frag, levelDetails);
       } else if (this.bitrateTest) {
         this.log(
           `Fragment ${frag.sn} of level ${frag.level} is being downloaded to test bitrate and will not be buffered`
         );
-        this._loadBitrateTestFrag(frag, level);
+        this._loadBitrateTestFrag(frag, levelDetails);
       } else {
         this.startFragRequested = true;
-        super.loadFragment(frag, level, targetBufferTime);
+        super.loadFragment(frag, levelDetails, targetBufferTime);
       }
     } else if (fragState === FragmentState.APPENDING) {
       // Lower the buffer size and try again
@@ -871,7 +863,6 @@ export default class StreamController
         break;
       case ErrorDetails.LEVEL_LOAD_ERROR:
       case ErrorDetails.LEVEL_LOAD_TIMEOUT:
-      case ErrorDetails.LEVEL_PARSING_ERROR:
         if (this.state !== State.ERROR) {
           if (data.fatal) {
             // if fatal error, stop processing
@@ -955,11 +946,11 @@ export default class StreamController
       type !== ElementaryStreamTypes.AUDIO ||
       (this.audioOnly && !this.altAudio)
     ) {
-      const mediaBuffer =
+      const media =
         (type === ElementaryStreamTypes.VIDEO
           ? this.videoBuffer
           : this.mediaBuffer) || this.media;
-      this.afterBufferFlushed(mediaBuffer, type, PlaylistLevelType.MAIN);
+      this.afterBufferFlushed(media, type, PlaylistLevelType.MAIN);
     }
   }
 
@@ -1026,11 +1017,11 @@ export default class StreamController
     return audioCodec;
   }
 
-  private _loadBitrateTestFrag(frag: Fragment, level: Level) {
+  private _loadBitrateTestFrag(frag: Fragment, levelDetails: LevelDetails) {
     frag.bitrateTest = true;
-    this._doFragLoad(frag, level).then((data) => {
+    this._doFragLoad(frag, levelDetails).then((data) => {
       const { hls } = this;
-      if (!data || this.fragContextChanged(frag)) {
+      if (!data || hls.nextLoadLevel || this.fragContextChanged(frag)) {
         return;
       }
       this.fragLoadError = 0;

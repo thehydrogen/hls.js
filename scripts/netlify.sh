@@ -6,8 +6,8 @@ if [[ $(git rev-parse --is-shallow-repository) = "true" ]]; then
   git fetch --unshallow
 fi
 
-npx -y npm-ci-please@^1.1.1
-./scripts/set-package-version.sh
+npm ci
+node ./scripts/set-package-version.js
 npm run lint
 npm run type-check
 npm run build:ci

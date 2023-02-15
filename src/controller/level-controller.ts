@@ -11,7 +11,7 @@ import {
   ErrorData,
   LevelSwitchingData,
 } from '../types/events';
-import { HdcpLevel, HdcpLevels, Level } from '../types/level';
+import { Level } from '../types/level';
 import { Events } from '../events';
 import { ErrorTypes, ErrorDetails } from '../errors';
 import { isCodecSupportedInMp4, getCodecCompatibleName } from '../utils/codecs';
@@ -166,27 +166,8 @@ export default class LevelController extends BasePlaylistController {
     if (levels.length > 0) {
       // start bitrate is the first bitrate of the manifest
       bitrateStart = levels[0].bitrate;
-      // sort levels from lowest to highest
-      levels.sort((a, b) => {
-        if (a.attrs['HDCP-LEVEL'] !== b.attrs['HDCP-LEVEL']) {
-          return (a.attrs['HDCP-LEVEL'] || '') > (b.attrs['HDCP-LEVEL'] || '')
-            ? 1
-            : -1;
-        }
-        if (a.bitrate !== b.bitrate) {
-          return a.bitrate - b.bitrate;
-        }
-        if (a.attrs.SCORE !== b.attrs.SCORE) {
-          return (
-            a.attrs.decimalFloatingPoint('SCORE') -
-            b.attrs.decimalFloatingPoint('SCORE')
-          );
-        }
-        if (resolutionFound && a.height !== b.height) {
-          return a.height - b.height;
-        }
-        return 0;
-      });
+      // sort level on bitrate
+      levels.sort((a, b) => a.bitrate - b.bitrate);
       this._levels = levels;
       // find index of first level in sorted levels
       for (let i = 0; i < levels.length; i++) {
@@ -387,22 +368,9 @@ export default class LevelController extends BasePlaylistController {
           }
         }
         break;
-      case ErrorDetails.KEY_SYSTEM_STATUS_OUTPUT_RESTRICTED: {
-        const restrictedHdcpLevel = level.attrs['HDCP-LEVEL'];
-        if (restrictedHdcpLevel) {
-          this.hls.maxHdcpLevel =
-            HdcpLevels[
-              HdcpLevels.indexOf(restrictedHdcpLevel as HdcpLevel) - 1
-            ];
-          this.warn(
-            `Restricting playback to HDCP-LEVEL of "${this.hls.maxHdcpLevel}" or lower`
-          );
-        }
-      }
-      // eslint-disable-next-line no-fallthrough
-      case ErrorDetails.LEVEL_PARSING_ERROR:
       case ErrorDetails.FRAG_PARSING_ERROR:
       case ErrorDetails.KEY_SYSTEM_NO_SESSION:
+      case ErrorDetails.KEY_SYSTEM_STATUS_OUTPUT_RESTRICTED:
         levelIndex =
           data.frag?.type === PlaylistLevelType.MAIN
             ? data.frag.level
@@ -588,7 +556,7 @@ export default class LevelController extends BasePlaylistController {
 
       this.log(
         `Attempt loading level index ${level}${
-          hlsUrlParameters?.msn !== undefined
+          hlsUrlParameters
             ? ' at sn ' +
               hlsUrlParameters.msn +
               ' part ' +

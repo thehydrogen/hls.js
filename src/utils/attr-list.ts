@@ -1,5 +1,5 @@
-const DECIMAL_RESOLUTION_REGEX = /^(\d+)x(\d+)$/;
-const ATTR_LIST_REGEX = /(.+?)=(".*?"|.*?)(?:,|$)/g;
+const DECIMAL_RESOLUTION_REGEX = /^(\d+)x(\d+)$/; // eslint-disable-line no-useless-escape
+const ATTR_LIST_REGEX = /\s*(.+?)\s*=((?:\".*?\")|.*?)(?:,|$)/g; // eslint-disable-line no-useless-escape
 
 // adapted from https://github.com/kanongil/node-m3u8parse/blob/master/attrlist.js
 export class AttrList {
@@ -12,10 +12,6 @@ export class AttrList {
 
     for (const attr in attrs) {
       if (attrs.hasOwnProperty(attr)) {
-        if (attr.substring(0, 2) === 'X-') {
-          this.clientAttrs = this.clientAttrs || [];
-          this.clientAttrs.push(attr);
-        }
         this[attr] = attrs[attr];
       }
     }
@@ -103,8 +99,8 @@ export class AttrList {
       ) {
         value = value.slice(1, -1);
       }
-      const name = match[1].trim();
-      attrs[name] = value;
+
+      attrs[match[1]] = value;
     }
     return attrs;
   }

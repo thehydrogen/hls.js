@@ -6,8 +6,9 @@ export type Frame = DecodedFrame<ArrayBuffer | string>;
 
 /**
  * Returns true if an ID3 header can be found at offset in data
- * @param data - The data to search
- * @param offset - The offset at which to start searching
+ * @param {Uint8Array} data - The data to search in
+ * @param {number} offset - The offset at which to start searching
+ * @return {boolean} - True if an ID3 header is found
  */
 export const isHeader = (data: Uint8Array, offset: number): boolean => {
   /*
@@ -50,8 +51,9 @@ export const isHeader = (data: Uint8Array, offset: number): boolean => {
 
 /**
  * Returns true if an ID3 footer can be found at offset in data
- * @param data - The data to search
- * @param offset - The offset at which to start searching
+ * @param {Uint8Array} data - The data to search in
+ * @param {number} offset - The offset at which to start searching
+ * @return {boolean} - True if an ID3 footer is found
  */
 export const isFooter = (data: Uint8Array, offset: number): boolean => {
   /*
@@ -84,9 +86,9 @@ export const isFooter = (data: Uint8Array, offset: number): boolean => {
 
 /**
  * Returns any adjacent ID3 tags found in data starting at offset, as one block of data
- * @param data - The data to search in
- * @param offset - The offset at which to start searching
- * @returns the block of data containing any ID3 tags found
+ * @param {Uint8Array} data - The data to search in
+ * @param {number} offset - The offset at which to start searching
+ * @return {Uint8Array | undefined} - The block of data containing any ID3 tags found
  * or *undefined* if no header is found at the starting offset
  */
 export const getID3Data = (
@@ -136,7 +138,8 @@ export const canParse = (data: Uint8Array, offset: number): boolean => {
 
 /**
  * Searches for the Elementary Stream timestamp found in the ID3 data chunk
- * @param data - Block of data containing one or more ID3 tags
+ * @param {Uint8Array} data - Block of data containing one or more ID3 tags
+ * @return {number | undefined} - The timestamp
  */
 export const getTimeStamp = (data: Uint8Array): number | undefined => {
   const frames: Frame[] = getID3Frames(data);
@@ -154,6 +157,7 @@ export const getTimeStamp = (data: Uint8Array): number | undefined => {
 
 /**
  * Returns true if the ID3 frame is an Elementary Stream timestamp frame
+ * @param {ID3 frame} frame
  */
 export const isTimeStampFrame = (frame: Frame): boolean => {
   return (
@@ -180,7 +184,8 @@ const getFrameData = (data: Uint8Array): RawFrame => {
 
 /**
  * Returns an array of ID3 frames found in all the ID3 tags in the id3Data
- * @param id3Data - The ID3 data containing one or more ID3 tags
+ * @param {Uint8Array} id3Data - The ID3 data containing one or more ID3 tags
+ * @return {ID3.Frame[]} - Array of ID3 frame objects
  */
 export const getID3Frames = (id3Data: Uint8Array): Frame[] => {
   let offset = 0;
