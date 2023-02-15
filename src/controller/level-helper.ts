@@ -1,7 +1,6 @@
 /**
- * @module LevelHelper
- * Providing methods dealing with playlist sliding and drift
- * */
+ * Provides methods dealing with playlist sliding and drift
+ */
 
 import { logger } from '../utils/logger';
 import { Fragment, Part } from '../loader/fragment';
@@ -199,7 +198,6 @@ export function mergeDetails(
       ) {
         newFrag.start = newFrag.startPTS = oldFrag.startPTS as number;
         newFrag.startDTS = oldFrag.startDTS;
-        newFrag.appendedPTS = oldFrag.appendedPTS;
         newFrag.maxStartPTS = oldFrag.maxStartPTS;
 
         newFrag.endPTS = oldFrag.endPTS;
@@ -493,7 +491,14 @@ export function getPartWith(
   if (!level || !level.details) {
     return null;
   }
-  const partList = level.details.partList;
+  return findPart(level.details?.partList, sn, partIndex);
+}
+
+export function findPart(
+  partList: Part[] | null | undefined,
+  sn: number,
+  partIndex: number
+): Part | null {
   if (partList) {
     for (let i = partList.length; i--; ) {
       const part = partList[i];
